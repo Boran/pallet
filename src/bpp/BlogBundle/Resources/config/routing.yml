@@ -1,0 +1,6 @@
+#BlogBundle_homepage:
+#    pattern:  /hello/{name}
+#    defaults: { _controller: BlogBundle:Default:index }
+Blog_home:
+    path: /blog/{name}
+    defaults: { _controller: BlogBundle:Public:index, name: 'foo' }

@@ -1,0 +1,7 @@
+parameters:
+#    bpp_test2.example.class: bpp\Test2Bundle\Example
+
+services:
+#    bpp_test2.example:
+#        class: %bpp_test2.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]
