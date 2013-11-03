@@ -4,10 +4,10 @@ namespace bpp\PalletBundle\Entity;
 
 class Pallet
 {
-    protected $pallet, $threed;
+    protected $pallet;
     // This is a very small app: so if variable are public, dont need a get/setter :-)
     public $layout, $rollwidth_mm, $diam_mm, $rows, $plength_mm, $pwidth_mm;
-    public $maxLoadingHeight, $maxLoadingWeight, $rollkgs;
+    public $maxLoadingHeight, $maxLoadingWeight, $rollkgs, $threed;
 
     // Pallet canvas size on the screen
     //$pwidth=120;  // pallet width/dept in pixels
