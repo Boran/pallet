@@ -12,11 +12,14 @@ use Symfony\Component\Debug\Debug;
 if (isset($_SERVER['HTTP_CLIENT_IP'])
     || isset($_SERVER['HTTP_X_FORWARDED_FOR'])
     || !in_array(@$_SERVER['REMOTE_ADDR'], array('127.0.0.1', 'fe80::1', '::1',
-	     '176.17.3.21','192.168.60.1'))
+	    '176.17.3.21',
+	    '176.17.3.112',
+	    '192.168.10.1',
+	    '192.168.60.1'))
 ) {
     header('HTTP/1.0 403 Forbidden');
     //print @$_SERVER['REMOTE_ADDR'];
-    exit('You are not allowed to access this file. Check '.basename(__FILE__).' for more information.');
+    exit('You '. $_SERVER['REMOTE_ADDR'] . ' are not allowed to access this file. Check '.basename(__FILE__).' for more information.');
 }
 
 $loader = require_once __DIR__.'/../app/bootstrap.php.cache';
