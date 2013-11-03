@@ -1,10 +1,16 @@
-{% block title "Pallet: specify  "%}
+{% block content %}
+        <h1>Pallet specification {{ name }}</h1>
+{% endblock %}
  {{ form(form) }}
 
+{% if image_path is defined %}
+    <h2>Suggested pallet layout:</h2>
+    <img src={{ image_path }} alt='Generated image'>
+{% endif %}
 
 {#
 {% block title "Pallet  " ~ name %}
-
+{% block title "Pallet details  " ~ name %}
 {% block content %}
     <h1>PALLET  {{ name }}!</h1>
 {% endblock %}

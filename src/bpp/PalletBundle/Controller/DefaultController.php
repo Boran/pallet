@@ -47,7 +47,6 @@ class DefaultController extends Controller
         $image_hor='/reelh.jpg';
         $heightwarning='';
 
-
         // @todo: pull values optionally for get/post arguments
         //$this->debug1( $request->query->get('file') );  // get /pallet/foo?file=ss
 
@@ -97,12 +96,17 @@ class DefaultController extends Controller
         $form->handleRequest($request);
         if ($form->isValid()) {
             $this->makePallet($pallet);
-            return new Response("Pallet: submitted layout= " . $pallet->layout
-              . ", rollkgs=$pallet->rollkgs" );
+            //return new Response("Pallet: submitted layout= " . $pallet->layout
+            //  . ", rollkgs=$pallet->rollkgs" );
+            return $this->render('PalletBundle:Default:index.html.twig',
+                array('form' => $form->createView(), 'name'=>'',
+                    'image_path'=>$pallet->image_path, )
+            );
         }
         //return array('form' => $form->createView);  // use Twig
-        return $this->render('PalletBundle:Default:index.html.twig', array(
-            'form' => $form->createView(), ));
+        return $this->render('PalletBundle:Default:index.html.twig',
+            array('form' => $form->createView(), 'name'=>'', )
+        );
 //----------------------
         //return array('name' => $name);  // use Twig
         //return new Response("Pallet: $name");
@@ -184,7 +188,7 @@ class DefaultController extends Controller
             $result = new \Imagick();
 
             $result->newImage($plength+3*$radius, $pwidth+3*$radius, 'white');
-            // add picture: $result->compositeImage($pallet, imagick::COMPOSITE_OVER, 0, $palletyoffset);
+            // add picture: $result->compositeImage($pallet, \imagick::COMPOSITE_OVER, 0, $palletyoffset);
             $rect = new \ImagickDraw();    // the wooden part of the pallet
             $rect->setStrokeColor('SaddleBrown');
             $rect->setStrokeWidth(1);
@@ -322,7 +326,7 @@ class DefaultController extends Controller
         #$x=0; $y=$palletyoffset+15;
         #$x=$pwidth*.90; $y=$palletyoffset-40;
          $x=2; $y=2;
-        #$result->compositeImage($reel, imagick::COMPOSITE_OVER, $x,$y);
+        #$result->compositeImage($reel, \imagick::COMPOSITE_OVER, $x,$y);
         //$rowoffset=$p1/200;
         $rowoffset=7;
 
@@ -345,7 +349,7 @@ class DefaultController extends Controller
                     for ($j = $up; $j >0; $j--) {
                         for ($i = $across; $i >0; $i--) {
                             //debug1("$i $j $row : ");
-                            $result->compositeImage($reel, imagick::COMPOSITE_OVER,
+                            $result->compositeImage($reel, \imagick::COMPOSITE_OVER,
                                 //($i)*$diam-$radius -($rows-$row-2)*$rowoffset, $j*$diam-$diam +$row*$rowoffset);
                                 ($i)*$diam-$radius +$row*$rowoffset -5, $j*$diam-$diam +$row*$rowoffset);
                             // TODO
@@ -406,7 +410,7 @@ class DefaultController extends Controller
                             // do not create a roll on the right, not rnough space
                         } else {        // add reel image
                             $rollsperpallet++;
-                            $result->compositeImage($reel, imagick::COMPOSITE_OVER,
+                            $result->compositeImage($reel, \imagick::COMPOSITE_OVER,
                                 $x+ $row*$rowoffset +$left, $y +$row*$rowoffset +$top);
                         }
                     }
@@ -425,7 +429,7 @@ class DefaultController extends Controller
             $this->debug1("horizontal square: nrollsperrow=$nrollsperrow across=$across up=$up rollsperpallet=$rollsperpallet palletheight=$palletheight");
             for ($row = 0; $row < $rows; $row++) {
                 for ($j = 0; $j < $up; $j++) {
-                    $result->compositeImage($reel, imagick::COMPOSITE_OVER,
+                    $result->compositeImage($reel, \imagick::COMPOSITE_OVER,
                         $x+ $row*$rowoffset , $y  +$j*$diam);
                 }
             }
@@ -453,7 +457,7 @@ class DefaultController extends Controller
                         // do not create a roll on the bottom, not enough space
                     } else {        // add reel image
                         $rollsperpallet++;
-                        $result->compositeImage($reel, imagick::COMPOSITE_OVER,
+                        $result->compositeImage($reel, \imagick::COMPOSITE_OVER,
                             $x+ $row*$rowoffset , $y +$top);
                     }
                 }
@@ -479,7 +483,7 @@ class DefaultController extends Controller
                         } else {
                             //echo "even row=$row j=$j top=$top <br>";
                             $rollsperpallet++;
-                            $result->compositeImage($reel, imagick::COMPOSITE_OVER,
+                            $result->compositeImage($reel, \imagick::COMPOSITE_OVER,
                                 $x+ $row*$rowoffset , $y +$top);
                         }
                     } else {
@@ -489,7 +493,7 @@ class DefaultController extends Controller
                         } else {
                             //echo "odd row=$row j=$j top=$top <br>";
                             $rollsperpallet++;
-                            $result->compositeImage($reel, imagick::COMPOSITE_OVER,
+                            $result->compositeImage($reel, \imagick::COMPOSITE_OVER,
                                 $x+ $row*$rowoffset , $y +$top);
                         }
 
@@ -501,7 +505,7 @@ class DefaultController extends Controller
 
         } else {  // testing, draw one reel
             //$reel->rotateImage('none', 90);
-            $result->compositeImage($reel, imagick::COMPOSITE_OVER, 1, 1);
+            $result->compositeImage($reel, \imagick::COMPOSITE_OVER, 1, 1);
             //$result->rotateImage('none', 33);
         }
 
@@ -540,6 +544,7 @@ class DefaultController extends Controller
             }
             //echo "<img src=$outdirweb$f alt='Generated image'>";
             $this->debug1("generated $outdirweb$f");
+            $pallet->image_path=$outdirweb . $f;    // save the resulting link
         }
         //echo "<img src=/$d/out/output2.jpg alt='Generated image'>";
         $result->destroy();
