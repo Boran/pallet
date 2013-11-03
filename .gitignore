@@ -7,3 +7,5 @@
 /vendor/
 /web/bundles/
 /composer.phar
+/.idea/*
+.idea

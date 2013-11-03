@@ -41,11 +41,11 @@ class DefaultController extends Controller
         $this->debug1("indexAction $name "  );
         //------ defaults ----------------
         // Pallet canvas size on the screen
-        $pwidth=360;  // need better reel icon before using bigger sizes
-        $plength=300; // down
-        $image_ver='/reelv.jpg';   // reelv2.png
-        $image_hor='/reelh.jpg';
-        $heightwarning='';
+        //$pwidth=360;  // need better reel icon before using bigger sizes
+        //$plength=300; // down
+        //$image_ver='/reelv.jpg';   // reelv2.png
+        //$image_hor='/reelh.jpg';
+        //$heightwarning='';
 
         // @todo: pull values optionally for get/post arguments
         //$this->debug1( $request->query->get('file') );  // get /pallet/foo?file=ss
@@ -73,21 +73,23 @@ class DefaultController extends Controller
                         'horsq' =>'Horizontal square',
                         'horpyr'=>'Horizontal pyramid'),
                     'required'  => true,
+                    'label'     =>'Pallet length',
                 ))
-            ->add('threed', 'text')
+            //->add('threed', 'text')
             ->add('rollwidth_mm', 'integer')
             ->add('diam_mm', 'integer')
-            ->add('rows', 'integer')
-            ->add('plength_mm', 'integer')
-            ->add('pwidth_mm', 'integer')
-            ->add('maxLoadingHeight', 'integer')
-            ->add('maxLoadingWeight', 'integer')
-            ->add('rollkgs', 'integer')
+            ->add('rows',             'integer', array('label'=>'How many vertical rows?'))
+            ->add('plength_mm',       'integer', array('label'=>'Pallet length'))
+            ->add('pwidth_mm',        'integer', array('label'=>'Pallet width'))
+            ->add('maxLoadingHeight', 'integer', array('label'=>'Pallet max height(mm)'))
+            ->add('maxLoadingWeight', 'integer', array('label'=>'Pallet max weight(kgs)'))
+            ->add('rollkgs',          'integer', array('label'=>'Roll weight (kgs)'))
             ->add('threed', 'choice', array(
                     'choices' => array(
                         '0'=>'No',
                         '1'=>'Yes'),
                     'required' => true,
+                    'label'=>'3 D effect'
                 ))
             ->add('Calculate', 'submit')
             ->getForm();
@@ -132,10 +134,10 @@ class DefaultController extends Controller
         $plength=$pallet->plength;
         $threed=$pallet->threed;   //  enable 3D
 
-        $f='output.jpg';     // @todo: parater or "download"
-        $image_ver='/reelv.jpg';   // reelv2.png
-        $image_hor='/reelh.jpg';
-        $heightwarning='';
+        $f='output.jpg';     // @todo: parameter or "download"
+        //$image_ver='/reelv.jpg';   // reelv2.png
+        //$image_hor='/reelh.jpg';
+        //$heightwarning='';
 
         // Directories where our script in, where output is stored.
         //$dir=dirname(__FILE__);
@@ -309,7 +311,7 @@ class DefaultController extends Controller
             //$circle->circle($radius-10, $radius-10, $radius-20, $diam-20); //
             $circle->setStrokeWidth(1);
             $coreradius= 96/2/$pscalex; // defsult core size 96mm in px
-            $core = new ImagickDraw();
+            $core = new \ImagickDraw();
             $core->setFillColor('darkgrey');
             $core->circle($radius+$offset3d, $radius+$offset3d, $radius, $radius+$coreradius); //
 
@@ -509,8 +511,8 @@ class DefaultController extends Controller
             //$result->rotateImage('none', 33);
         }
 
-        if ($palletheight>$maxLoadingHeight) {
-            $this-debug("MaxLoadingHeight $maxLoadingHeight exceeded.");
+        if ($palletheight > $maxLoadingHeight) {
+            $this-debug1("MaxLoadingHeight $maxLoadingHeight exceeded.");
         }
 
 
@@ -520,7 +522,7 @@ class DefaultController extends Controller
         //$result->rotateImage('white', -45);
         // TODO: or tilt?
         if ($f == 'download') {
-            debug1("send pallet.jpg to $caller for download");
+            $this->debug1("send pallet.jpg to caller for download");
             //$result->scaleImage(120, 100); // reduce to thumbnail
             ob_clean();                         // Clear buffer
             Header("Content-Description: File Transfer");
@@ -544,11 +546,10 @@ class DefaultController extends Controller
             }
             //echo "<img src=$outdirweb$f alt='Generated image'>";
             $this->debug1("generated $outdirweb$f");
-            $pallet->image_path=$outdirweb . $f;    // save the resulting link
         }
         //echo "<img src=/$d/out/output2.jpg alt='Generated image'>";
+        $pallet->image_path=$outdirweb . $f;    // save the resulting link
         $result->destroy();
-
 
 
     }   // makePallet

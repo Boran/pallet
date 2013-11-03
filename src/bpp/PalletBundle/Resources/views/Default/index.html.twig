@@ -1,11 +1,28 @@
 {% block content %}
         <h1>Pallet specification {{ name }}</h1>
 {% endblock %}
- {{ form(form) }}
+{# Easy way: dump the form, but no control of order: {{ form(form) }}
+#}
+{{ form_start(form) }}
+    {{ form_errors(form) }}
+    {{ form_row(form.layout) }}
+    {{ form_row(form.threed) }}
+    {{ form_row(form.maxLoadingHeight) }}
+    {{ form_row(form.maxLoadingWeight) }}
+    <div>
+    {{ form_row(form.plength_mm) }}
+    {{ form_row(form.pwidth_mm) }}
+    </div>
+    {{ form_row(form.rows) }}
+
+    {{ form_row(form.rollwidth_mm) }}
+    {{ form_row(form.rollkgs) }}
+    {{ form_row(form.diam_mm) }}
+{{ form_end(form) }}
 
 {% if image_path is defined %}
     <h2>Suggested pallet layout:</h2>
-    <img src={{ image_path }} alt='Generated image'>
+    <img src={{ image_path }} alt='Generated image'></img>
 {% endif %}
 
 {#
@@ -14,4 +31,7 @@
 {% block content %}
     <h1>PALLET  {{ name }}!</h1>
 {% endblock %}
+ {{ form(form) }}
+ {{ form_row(form.Calculate) }}
+ <input type="submit" />
 #}
