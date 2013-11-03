@@ -7,15 +7,15 @@ pallet:
 #    resource: "@BlogBundle/Controller/"
 #    type:     annotation
 #    prefix:   /blog
-blog:
-    resource: "@BlogBundle/Resources/config/routing.yml"
-    prefix:   /
-
-bpp_test2:
-    #resource: "@bppTest2Bundle/Resources/config/routing.yml"
-    resource: "@bppTest2Bundle/Controller/"
-    type:     annotation
-    prefix:   /
+#blog:
+#    resource: "@BlogBundle/Resources/config/routing.yml"
+#    prefix:   /
+#
+#bpp_test2:
+#    #resource: "@bppTest2Bundle/Resources/config/routing.yml"
+#    resource: "@bppTest2Bundle/Controller/"
+#    type:     annotation
+#    prefix:   /
 
 
 
