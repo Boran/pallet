@@ -1,8 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {% block stylesheets %}
+        <link href="{{ asset('bundles/pallet/css/main.css') }}" rel="stylesheet" type="text/css" />
+    {% endblock %}
+
+</head>
+<body>
+
 {% block content %}
         <h1>Pallet specification {{ name }}</h1>
 {% endblock %}
-{# Easy way: dump the form, but no control of order: {{ form(form) }}
-#}
+{# Easy way: dump the form, but no control of order: {{ form(form) }} #}
+<div id=palletform>
 {{ form_start(form) }}
     {{ form_errors(form) }}
     {{ form_row(form.layout) }}
@@ -19,6 +29,7 @@
     {{ form_row(form.rollkgs) }}
     {{ form_row(form.diam_mm) }}
 {{ form_end(form) }}
+</div>
 
 {% if image_path is defined %}
     <h2>Suggested pallet layout:</h2>
@@ -34,4 +45,12 @@
  {{ form(form) }}
  {{ form_row(form.Calculate) }}
  <input type="submit" />
+
+     {% stylesheets 'bundles/acme_foo/css/*' filter='cssrewrite' %}
+    <link rel="stylesheet" href="{{ asset_url }}" />
+    {% endstylesheets %}
+
 #}
+
+</body>
+</html>

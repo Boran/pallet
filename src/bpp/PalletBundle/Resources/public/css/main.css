@@ -99,3 +99,12 @@ ul#demo-list a {
     white-space: pre;
     font-family: monospace;
 }
+
+#palletform {
+    margin-left: 20px;
+}
+#palletform label {
+    display: block;
+    float: left;
+    width: 190px;
+}
