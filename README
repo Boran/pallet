@@ -3,26 +3,29 @@ Allow reels to be optimally laid out on a Pallet.
  * given the dimensions or pallet and reel
  * With layout for 5 different scenarios
 
+GUI Interface
+https://github.com/Boran/pallet/blob/master/samples/web_ui_1.png
+
 The tool was written for Boran Plastic Packaging Ltd. originally.
 
 Sample outputs:
-https://github.com/Boran/pallet.legacy/blob/master/samples/sample1.jpg
-https://github.com/Boran/pallet.legacy/blob/master/samples/sample2.jpg
-https://github.com/Boran/pallet.legacy/blob/master/samples/sample3.jpg
-https://github.com/Boran/pallet.legacy/blob/master/samples/sample4.jpg
-https://github.com/Boran/pallet.legacy/blob/master/samples/sample5.jpg
-https://github.com/Boran/pallet.legacy/blob/master/samples/sample6.jpg
-https://github.com/Boran/pallet.legacy/blob/master/samples/sample7.jpg
-
-Uses imagemagick and Symfony libaries, tested on Ubuntu 12.04
-This is also my first go at programming in Symfony2.
+https://github.com/Boran/pallet/blob/master/samples/sample1.jpg
+https://github.com/Boran/pallet/blob/master/samples/sample2.jpg
+https://github.com/Boran/pallet/blob/master/samples/sample3.jpg
+https://github.com/Boran/pallet/blob/master/samples/sample4.jpg
+https://github.com/Boran/pallet/blob/master/samples/sample5.jpg
+https://github.com/Boran/pallet/blob/master/samples/sample6.jpg
+https://github.com/Boran/pallet/blob/master/samples/sample7.jpg
 
 LICENSE: GNU Version 2, http://www.gnu.org/licenses/gpl-2.0.html
 
 Install/deployment : see INSTALL.pallet.txt
 
+Uses imagemagick and Symfony libraries, tested on Ubuntu 12.04
+This is also my first go at programming in Symfony2 :-)
+
 Troubleshooting
   Logging is done to syslog, the browser console and of course /var/log/apache2/error.log
   See also $debug_flag1 and $debug_to_syslog=TRUE
   
-Sean Boran, 5.11.2103
+Sean Boran, 5.11.2013

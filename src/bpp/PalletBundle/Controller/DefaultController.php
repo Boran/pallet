@@ -38,7 +38,11 @@ class DefaultController extends Controller
      */
     public function indexAction(Request $request, $name)
     {
-        $this->debug1("indexAction received name=$name "  );
+        $this->debug1("indexAction received name=$name ");
+        $params = $this->getRequest()->request->all();
+        //print_r($params);   ['_route_params']   attributes()->get()
+        //echo "<pre>"; \Doctrine\Common\Util\Debug::dump($request->parameters()); echo "</pre>";
+        //echo "<pre>"; \Doctrine\Common\Util\Debug::dump($request); echo "</pre>";
 
         // @todo: pull values optionally for get/post arguments
         //$this->debug1( $request->query->get('file') );  // get /pallet/foo?file=ss

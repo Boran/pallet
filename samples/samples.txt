@@ -1,0 +1,8 @@
+The 7 example images were generated withj the parameters:
+diam_mm=200&rollwidth_mm=500&layout=verint&rows=1
+diam_mm=350&rollwidth_mm=500&layout=verint&rows=1
+diam_mm=200&rollwidth_mm=500&layout=versq&rows=3
+diam_mm=200&rollwidth_mm=500&layout=horsq&rows=2
+diam_mm=200&rollwidth_mm=500&layout=horint&rows=2
+diam_mm=200&rollwidth_mm=500&layout=horpyr&rows=4
+diam_mm=300&rollwidth_mm=500&layout=horpyr&rows=3
