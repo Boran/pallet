@@ -39,32 +39,9 @@ class DefaultController extends Controller
     public function indexAction(Request $request, $name)
     {
         $this->debug1("indexAction received name=$name "  );
-        //------ defaults ----------------
-        // Pallet canvas size on the screen
-        //$pwidth=360;  // need better reel icon before using bigger sizes
-        //$plength=300; // down
-        //$image_ver='/reelv.jpg';   // reelv2.png
-        //$image_hor='/reelh.jpg';
-        //$heightwarning='';
 
         // @todo: pull values optionally for get/post arguments
         //$this->debug1( $request->query->get('file') );  // get /pallet/foo?file=ss
-
-        // Directories where our script in, where output is stored.
-        // to be passed to the pallet object
-        $dir = $this->get('kernel')->getRootDir() . '/../web';
-        //$this->debug1('__FILE__=' . dirname(__FILE__) . ', REQUEST_URI=' . dirname($_SERVER['REQUEST_URI'])
-        //    . ", dir=$dir");
-        $outdir=$dir . '/out';
-        //$outdirweb = dirname($_SERVER['REQUEST_URI']) . '/out/';
-        //$this->getRequest()->getBasePath()
-        $outdirweb = '/pallet/web/out/';  // @todo FIX!!
-        if (!is_writable($outdir)) {
-            $this->debug1("$outdir does not exist or is not writeable, lets try to create it");
-            if (!@mkdir($outdir, 700, true)) {
-                die('Cannot create output directory: ' . $outdir . '. <br>Make sure this exists and belongs to the webserver user, e.g. www-data');
-            }
-        }
 
         // create a Pallet object with default values, and a form
         $pallet = new Pallet();
@@ -101,11 +78,12 @@ class DefaultController extends Controller
 
         $form->handleRequest($request);
         if ($form->isValid()) {
-            $pallet->makePallet($outdir, $outdirweb);
+            $pallet->makePallet();
             //return new Response("Pallet: submitted layout= " . $pallet->layout
             //  . ", rollkgs=$pallet->rollkgs" );
             return $this->render('PalletBundle:Default:index.html.twig',
-                array('form' => $form->createView(), 'name'=>'',
+                array('form' => $form->createView(),
+                    'name'=>'',
                     'image_path'=>$pallet->image_path, )
             );
         }

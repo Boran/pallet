@@ -1,13 +1,19 @@
 <?php
 
+/**
+ * The pallet ojects cantains the spec of reels/pallets, and a method to generate
+ * an image with layout according to those specs.
+ */
 namespace bpp\PalletBundle\Entity;
 
 class Pallet
 {
-    protected $pallet;
+    protected $pallet, $logger, $flash;
+    protected $dir, $outdir, $outdirweb;
     // This is a very small app: so if variable are public, dont need a get/setter :-)
     public $layout, $rollwidth_mm, $diam_mm, $rows, $plength_mm, $pwidth_mm;
-    public $maxLoadingHeight, $maxLoadingWeight, $rollkgs, $threed, $image_path;
+    public $maxLoadingHeight, $maxLoadingWeight, $rollkgs, $threed;
+    public $image_path;
 
     // Pallet canvas size on the screen
     //$pwidth=120;  // pallet width/dept in pixels
@@ -22,17 +28,41 @@ class Pallet
     {
         $msg=rtrim($msg);
         if (($this->debug_flag1==TRUE) && (strlen($msg)>0) ) {
-            //$logger=$this->get('logger');
-            //$logger->info('Debug1 ' . $msg);
+            $this->logger->info('Debug1 ' . $msg);
             #echo "Debug1: $msg\n<br>";
         }
         //$this->get('session')->getFlashBag()->add(
-        //    'notice', 'flash=' . $msg
-        //);
+        //$kernel->getContainer()->get('session')->getFlashBag()->add(
+        $this->flash->add(
+            'notice', 'flash=' . $msg
+        );
     }
 
     public function __construct()
     {
+        global $kernel;
+        //$logger=$this->get('logger');
+        # Todo: hack to get at the logger
+        $this->logger=$kernel->getContainer()->get('logger');
+        $this->flash=$kernel->getContainer()->get('session')->getFlashBag();
+
+        // Directories where our script in, where output is stored.
+        //$dir = $this->get('kernel')->getRootDir() . '/../web';
+        $this->dir=$kernel->getRootDir() . '/../web';
+        //$this->debug1('__FILE__=' . dirname(__FILE__) . ', REQUEST_URI=' . dirname($_SERVER['REQUEST_URI'])
+        //    . ", dir=$dir");
+        $this->outdir=$this->dir . '/out';
+        //$outdirweb = dirname($_SERVER['REQUEST_URI']) . '/out/';
+        //$this->getRequest()->getBasePath()
+        $this->outdirweb = '/pallet/web/out/';  // @todo FIX!!
+        if (!is_writable($this->outdir)) {
+            $this->debug1("$this->outdir does not exist or is not writeable, lets try to create it");
+            if (!@mkdir($this->outdir, 700, true)) {
+                die('Cannot create output directory: ' . $this->outdir . '. <br>Make sure this exists and belongs to the webserver user, e.g. www-data');
+            }
+        }
+
+        // default values for the new object
         $this->setLayout('versq');
         $this->setThreed('0');
         $this->rollwidth_mm=300;
@@ -63,11 +93,11 @@ class Pallet
     }
 
     /**
-     * @param $pallet
+     * @param $outdir, $outdirweb
      * Create the pallet image, based on the pallet spec
-     * @todo: send back an image?
+     * store image location in $image_path
      */
-    public function makePallet($outdir, $outdirweb)
+    public function makePallet()
     {
         $layout=$this->layout;
         $rollwidth_mm=$this->rollwidth_mm;
@@ -86,9 +116,6 @@ class Pallet
         //$image_ver='/reelv.jpg';   // reelv2.png
         //$image_hor='/reelh.jpg';
         //$heightwarning='';
-
-
-
 
         // -- Pallet: calculate scaling
         $p2=$pwidth_mm;
@@ -152,7 +179,7 @@ class Pallet
         {
             die('Error Imagick: ' . $e->getMessage() );
         }
-        $this->debug1('OK: empty pallet image created');
+        //$this->debug1('OK: empty pallet image created');
 
 
         // ---------- Each reel ----
@@ -256,7 +283,7 @@ class Pallet
             $reel->drawImage($core);
             //$reel->rotateImage('none', 90);
         }
-        $this->debug1('OK: reel created');
+        //$this->debug1('OK: reel created');
 
         // Origin
         #$x=0; $y=$palletyoffset+15;
@@ -354,7 +381,6 @@ class Pallet
             }
             $this->debug1("vertical interlinked: nrollsperrow=$nrollsperrow across=$across up=$up rollsperpallet=$rollsperpallet palletheight=$palletheight");
 
-
         } else if ($layout == 'horsq') {     // -- horiz. square --
             $rowoffset=$radius*0.75;
             $across=1;
@@ -369,7 +395,6 @@ class Pallet
                         $x+ $row*$rowoffset , $y  +$j*$diam);
                 }
             }
-
 
         } else if ($layout == 'horint') {     // -- horiz. interlink --
             $rowoffset=$radius*0.65;
@@ -399,7 +424,6 @@ class Pallet
                 }
             }
             $this->debug1("horizontal interlinked: across=$across up=$up rollsperpallet=$rollsperpallet palletheight=$palletheight");
-
 
         } else if ($layout == 'horpyr') {     // -- horiz. pyramid --
             $rowoffset=$radius*0.65;
@@ -438,7 +462,6 @@ class Pallet
             }
             $this->debug1("horizontal pyramid: across=$across up=$up rollsperpallet=$rollsperpallet palletheight=$palletheight");
 
-
         } else {  // testing, draw one reel
             //$reel->rotateImage('none', 90);
             $result->compositeImage($reel, \imagick::COMPOSITE_OVER, 1, 1);
@@ -465,24 +488,24 @@ class Pallet
             Header("Content-Disposition: attachment; filename=" . "pallet.jpg");
             $result->writeImage($dir . '/out/' . $f);  // Write to disk anyway?
             //header('Content-Length: ' . $dir . '/out/' . $f);  // TODO: Calculate image size?
-            echo $result;                          // Output to browser
+            echo $result;                          // todo: Output to browser
 
         } else {
             //$result->scaleImage(75, 90); // reduce to thumbnail
             //$result->scaleImage(200, 240); // increase
             try
             {
-                $result->writeImage($outdir . '/' . $f);       // Write to disk
+                $result->writeImage($this->outdir . '/' . $f);       // Write to disk
             }
             catch(Exception $e)
             {
                 die('Error Imagick: ' . $e->getMessage() );
             }
-            //echo "<img src=$outdirweb$f alt='Generated image'>";
-            $this->debug1("generated $outdirweb$f");
+            //echo "<img src=$this->outdirweb$f alt='Generated image'>";
+            $this->debug1("generated $this->outdirweb$f");
         }
         //echo "<img src=/$d/out/output2.jpg alt='Generated image'>";
-        $this->image_path=$outdirweb . $f;    // save the resulting link
+        $this->image_path=$this->outdirweb . $f;    // save the resulting link
         $result->destroy();
 
 
