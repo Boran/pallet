@@ -1,3 +1,0 @@
-bpp_test2_homepage:
-    pattern:  /test2/{name}
-    defaults: { _controller: bppTest2Bundle:Default:index }
