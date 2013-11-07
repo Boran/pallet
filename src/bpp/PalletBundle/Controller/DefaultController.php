@@ -44,12 +44,17 @@ class DefaultController extends Controller
         //print_r($params);   ['_route_params']   attributes()->get()
         //echo "<pre>"; \Doctrine\Common\Util\Debug::dump($request->parameters()); echo "</pre>";
         //echo "<pre>"; \Doctrine\Common\Util\Debug::dump($request); echo "</pre>";
-
         // @todo: pull values optionally for get/post arguments
         //$this->debug1( $request->query->get('file') );  // get /pallet/foo?file=ss
 
+        //$this->debug1('__FILE__=' . dirname(__FILE__) . ', REQUEST_URI=' . dirname($_SERVER['REQUEST_URI'])
+        //   . ", getRootDir=" . $this->get('kernel')->getRootDir()
+        //   . " getBasePath=" . $request->getBasePath()
+        //);
+        $outdirweb = $request->getBasePath() . '/out/';  // /pallet/web/out : must get from request
+
         // create a Pallet object with default values, and a form
-        $pallet = new Pallet();
+        $pallet = new Pallet($outdirweb);
         $form = $this->createFormBuilder($pallet)
             ->add('layout', 'choice', array(
                     'choices' => array(

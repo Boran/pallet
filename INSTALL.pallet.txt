@@ -26,7 +26,7 @@ As root:
   su www-data -c 'php app/console cache:clear --env=dev --no-debug'
   su www-data -c 'php app/console cache:clear --env=prod --no-debug'
   chown -R www-data app/cache app/logs
-- Pallout tool output directory
+- Pallet tool output directory
   mkdir web/out
   chown -R www-data web/out
 

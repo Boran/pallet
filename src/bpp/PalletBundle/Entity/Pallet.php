@@ -5,6 +5,7 @@
  * an image with layout according to those specs.
  */
 namespace bpp\PalletBundle\Entity;
+use Symfony\Component\HttpFoundation\Request;
 
 class Pallet
 {
@@ -40,7 +41,10 @@ class Pallet
         );
     }
 
-    public function __construct()
+    /*
+     * param $outdir: URL patch to output image /pallet/web/out : must get from request
+     */
+    public function __construct($outdirweb)
     {
         global $kernel;
         //$logger=$this->get('logger');
@@ -52,11 +56,13 @@ class Pallet
         //$dir = $this->get('kernel')->getRootDir() . '/../web';
         $this->dir=$kernel->getRootDir() . '/../web';
         //$this->debug1('__FILE__=' . dirname(__FILE__) . ', REQUEST_URI=' . dirname($_SERVER['REQUEST_URI'])
-        //    . ", dir=$dir");
-        $this->outdir=$this->dir . '/out';
-        //$outdirweb = dirname($_SERVER['REQUEST_URI']) . '/out/';
-        //$this->getRequest()->getBasePath()
-        $this->outdirweb = '/pallet/web/out/';  // @todo FIX!!
+        //    . ", " . $this->container->get('request')->server->get('DOCUMENT_ROOT')
+        //);
+        $this->outdir = $this->dir . '/out';
+        //$this->outdirweb = dirname($_SERVER['REQUEST_URI']) . '/out/';
+        //$this->getRequest()->getBasePath()      // dont have access to request
+        //$this->outdirweb = '/pallet/web/out/';  // @todo FIX!!
+        $this->outdirweb =$outdirweb;     // from controller
         if (!is_writable($this->outdir)) {
             $this->debug1("$this->outdir does not exist or is not writeable, lets try to create it");
             if (!@mkdir($this->outdir, 700, true)) {
