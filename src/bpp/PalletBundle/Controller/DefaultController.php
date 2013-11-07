@@ -59,12 +59,12 @@ class DefaultController extends Controller
                         'horsq' =>'Horizontal square',
                         'horpyr'=>'Horizontal pyramid'),
                     'required'  => true,
-                    'label'     =>'Pallet length',
+                    'label'     =>'Pallet layout',
                 ))
             //->add('threed', 'text')
-            ->add('rollwidth_mm', 'integer')
-            ->add('diam_mm', 'integer')
-            ->add('rows',             'integer', array('label'=>'How many vertical rows?'))
+            ->add('rollwidth_mm', 'integer',  array('label'=>'Roll width mm') )
+            ->add('diam_mm', 'integer',  array('label'=>'Roll diameter mm'))
+            ->add('rows',             'integer', array('label'=>'Pallet vertical rows'))
             ->add('plength_mm',       'integer', array('label'=>'Pallet length'))
             ->add('pwidth_mm',        'integer', array('label'=>'Pallet width'))
             ->add('maxLoadingHeight', 'integer', array('label'=>'Pallet max height(mm)'))

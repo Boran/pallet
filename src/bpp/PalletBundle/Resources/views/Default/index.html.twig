@@ -14,8 +14,8 @@
 <div id=palletform>
 {{ form_start(form) }}
     {{ form_errors(form) }}
-    {{ form_row(form.layout) }}
     {{ form_row(form.threed) }}
+    {{ form_row(form.layout) }}
     {{ form_row(form.maxLoadingHeight) }}
     {{ form_row(form.maxLoadingWeight) }}
     <div>
@@ -31,7 +31,7 @@
 </div>
 
 {% if image_path is defined %}
-    <h2>Results:</h2>
+    <h2>Results</h2>
     <ul>
         <li>Rolls per pallet = {{ pallet.rollsperpallet }}</li>
         <li>Pallet height = {{ pallet.palletheight }} mm {% if pallet.heightexceeded %} ({{ pallet.heightexceeded }}) {%  endif %} </li>
@@ -39,6 +39,8 @@
     </ul>
     <img src={{ image_path }} alt='Generated image'></img>
 {% endif %}
+
+<a href="https://github.com/Boran/pallet">by SB</a>
 
 {#
 {% block title "Pallet  " ~ name %}
