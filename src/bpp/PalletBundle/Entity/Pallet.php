@@ -44,25 +44,24 @@ class Pallet
     /*
      * param $outdir: URL patch to output image /pallet/web/out : must get from request
      */
-    public function __construct($outdirweb)
+    public function __construct()
     {
-        global $kernel;
-        //$logger=$this->get('logger');
-        # Todo: hack to get at the logger
-        $this->logger=$kernel->getContainer()->get('logger');
-        $this->flash=$kernel->getContainer()->get('session')->getFlashBag();
+        global $kernel;      // hack to get at the logger, request
+        $container=$kernel->getContainer();
+        $this->logger = $container->get('logger');
+        $this->flash  = $container->get('session')->getFlashBag();
 
         // Directories where our script in, where output is stored.
         //$dir = $this->get('kernel')->getRootDir() . '/../web';
-        $this->dir=$kernel->getRootDir() . '/../web';
-        //$this->debug1('__FILE__=' . dirname(__FILE__) . ', REQUEST_URI=' . dirname($_SERVER['REQUEST_URI'])
-        //    . ", " . $this->container->get('request')->server->get('DOCUMENT_ROOT')
-        //);
-        $this->outdir = $this->dir . '/out';
         //$this->outdirweb = dirname($_SERVER['REQUEST_URI']) . '/out/';
-        //$this->getRequest()->getBasePath()      // dont have access to request
-        //$this->outdirweb = '/pallet/web/out/';  // @todo FIX!!
-        $this->outdirweb =$outdirweb;     // from controller
+        $this->dir=$kernel->getRootDir() . '/../web';
+        $this->outdir = $this->dir . '/out';
+        $this->outdirweb = $container->get('request')->getBasePath() . '/out/';  // /pallet/web/out
+        //$this->debug1('__FILE__=' . dirname(__FILE__) . ', REQUEST_URI=' . dirname($_SERVER['REQUEST_URI'])
+        //    . ", DOCUMENT_ROOT=" . $container->get('request')->server->get('DOCUMENT_ROOT')
+        //    . ", getBasePath="  .$container->get('request')->getBasePath()
+        //);
+
         if (!is_writable($this->outdir)) {
             $this->debug1("$this->outdir does not exist or is not writeable, lets try to create it");
             if (!@mkdir($this->outdir, 700, true)) {

@@ -39,7 +39,7 @@ class DefaultController extends Controller
      */
     public function indexAction(Request $request)
     {
-        $this->debug1("indexAction ");
+        //$this->debug1("indexAction ");
         $params = $this->getRequest()->request->all();
         //print_r($params);   ['_route_params']   attributes()->get()
         //echo "<pre>"; \Doctrine\Common\Util\Debug::dump($request->parameters()); echo "</pre>";
@@ -84,7 +84,7 @@ class DefaultController extends Controller
                 ))
             ->add('Calculate', 'submit')
             ->getForm();
-        $this->debug1('form built');
+        //$this->debug1('form built');
 
         $form->handleRequest($request);
         if ($form->isValid()) {
