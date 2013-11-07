@@ -31,7 +31,12 @@
 </div>
 
 {% if image_path is defined %}
-    <h2>Suggested pallet layout:</h2>
+    <h2>Results:</h2>
+    <ul>
+        <li>Rolls per pallet = {{ pallet.rollsperpallet }}</li>
+        <li>Pallet height = {{ pallet.palletheight }} mm {% if pallet.heightexceeded %} ({{ pallet.heightexceeded }}) {%  endif %} </li>
+        <li>Pallet weight = {{ pallet.kgsperpallet }} kgs {% if pallet.weightexceeded %} ({{ pallet.weightexceeded }}) {%  endif %} </li>
+    </ul>
     <img src={{ image_path }} alt='Generated image'></img>
 {% endif %}
 

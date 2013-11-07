@@ -6,8 +6,6 @@ Allow reels to be optimally laid out on a Pallet.
 GUI Interface
 https://github.com/Boran/pallet/blob/master/samples/web_ui_1.png
 
-The tool was written for Boran Plastic Packaging Ltd. originally.
-
 Sample outputs:
 https://github.com/Boran/pallet/blob/master/samples/sample1.jpg
 https://github.com/Boran/pallet/blob/master/samples/sample2.jpg
@@ -19,13 +17,16 @@ https://github.com/Boran/pallet/blob/master/samples/sample7.jpg
 
 LICENSE: GNU Version 2, http://www.gnu.org/licenses/gpl-2.0.html
 
-Install/deployment : see INSTALL.pallet.txt
+Install: see INSTALL.pallet.txt
 
-Uses imagemagick and Symfony libraries, tested on Ubuntu 12.04
-This is also my first go at programming in Symfony2 :-)
+Based on
+  Uses imagemagick and Symfony libraries, tested on Ubuntu 12.04
+  This is also my first go at programming in Symfony2 :-)
 
 Troubleshooting
   Logging is done to syslog, the browser console and of course /var/log/apache2/error.log
   See also $debug_flag1 and $debug_to_syslog=TRUE
-  
-Sean Boran, 5.11.2013
+
+Credits
+  The tool was written for Boran Plastic Packaging Ltd..
+  Sean Boran, 5.11.2013

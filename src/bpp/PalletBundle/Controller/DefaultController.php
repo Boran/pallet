@@ -32,13 +32,14 @@ class DefaultController extends Controller
         );
     }
     /**
-     * @Route("/{name}")
+     * @Route("/")
      * @Template()
      *     will look for index.html.twig automatically
+     * TODO: add parameters like @Route("/{param1}")
      */
-    public function indexAction(Request $request, $name)
+    public function indexAction(Request $request)
     {
-        $this->debug1("indexAction received name=$name ");
+        $this->debug1("indexAction ");
         $params = $this->getRequest()->request->all();
         //print_r($params);   ['_route_params']   attributes()->get()
         //echo "<pre>"; \Doctrine\Common\Util\Debug::dump($request->parameters()); echo "</pre>";
@@ -88,7 +89,9 @@ class DefaultController extends Controller
             return $this->render('PalletBundle:Default:index.html.twig',
                 array('form' => $form->createView(),
                     'name'=>'',
-                    'image_path'=>$pallet->image_path, )
+                    'image_path'=>$pallet->image_path,
+                    'pallet' => $pallet
+                )
             );
         }
         //return array('form' => $form->createView);  // use Twig

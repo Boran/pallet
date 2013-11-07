@@ -10,10 +10,14 @@ class Pallet
 {
     protected $pallet, $logger, $flash;
     protected $dir, $outdir, $outdirweb;
+    public $debug_flag1=TRUE;
+    public $debug_to_syslog=FALSE;
     // This is a very small app: so if variable are public, dont need a get/setter :-)
     public $layout, $rollwidth_mm, $diam_mm, $rows, $plength_mm, $pwidth_mm;
     public $maxLoadingHeight, $maxLoadingWeight, $rollkgs, $threed;
-    public $image_path;
+    // results
+    public $image_path, $rollsperpallet=0, $palletheight=0, $kgsperpallet=0;
+    public $weightexceeded, $heightexceeded;
 
     // Pallet canvas size on the screen
     //$pwidth=120;  // pallet width/dept in pixels
@@ -21,8 +25,6 @@ class Pallet
     public $pwidth=360;  // need better reel icon before using bigger sizes
     public $plength=300; // down
 
-    public $debug_flag1=TRUE;
-    public $debug_to_syslog=FALSE;
 
     public function debug1($msg)
     {
@@ -105,13 +107,14 @@ class Pallet
         $rows=$this->rows;
         $pwidth_mm=$this->pwidth_mm;
         $plength_mm=$this->plength_mm;
-        $maxLoadingHeight=$this->maxLoadingHeight;
-        $maxLoadingWeight=$this->maxLoadingWeight;
         $rollkgs=$this->rollkgs;
         $pwidth=$this->pwidth;
         $plength=$this->plength;
         $threed=$this->threed;   //  enable 3D
 
+        // -- outputs --
+        $this->rollsperpallet=0;
+        $this->palletheight=0;
         $f='output.jpg';     // @todo: parameter or "download"
         //$image_ver='/reelv.jpg';   // reelv2.png
         //$image_hor='/reelh.jpg';
@@ -140,7 +143,7 @@ class Pallet
         $str="Layout=$layout: px rollwidth=$rollwidth diam=$diam radius=$radius CompressedDiameter=$CompressedDiameter pallet:$pwidth X $plength";
         //$bpp::PalletBundle::Controller::DefaultController::DefaultController->debug1($str);
 
-        // -- pallet base --
+        // -- draw pallet base --
         //$pallet = new Imagick($dir . '/pallet.png');
         //$palletprops = $pallet->getImageGeometry();
         // canvas: is 2D pallet: add enough space for 3d overhang
@@ -182,7 +185,7 @@ class Pallet
         //$this->debug1('OK: empty pallet image created');
 
 
-        // ---------- Each reel ----
+        // ---------- draw each reel ----
         //$reel   = new Imagick($dir . $image_ver);
         //$reel->scaleImage($diam, $rollwidth);  // Scale reel accoring to diameter and width
         //$reel->resizeImage($diam, $rollwidth);  // looks better than scaling
@@ -293,14 +296,14 @@ class Pallet
         //$rowoffset=$p1/200;
         $rowoffset=7;
 
-        /* ------------ layout the reels -------------------*/
+        /* ------ layout the reels ----------*/
         if ($layout == 'versq') {     // -- vertical square --
             $across=floor($p1/$diam_mm);
             $up=floor($p2/$diam_mm);   // round() if we want to allow an overhang
             $nrollsperrow=$across * $up;   // nr rolls per row
-            $rollsperpallet=$nrollsperrow*$rows;
-            $palletheight=$rollwidth_mm*$rows;
-            $this->debug1("vertical square: nrollsperrow=$nrollsperrow across=$across up=$up rollsperpallet=$rollsperpallet palletheight=$palletheight");
+            $this->rollsperpallet=$nrollsperrow*$rows;
+            $this->palletheight=$rollwidth_mm*$rows;
+            $this->debug1("vertical square: nrollsperrow=$nrollsperrow across=$across up=$up rollsperpallet=$this->rollsperpallet palletheight=$this->palletheight");
 
             if ($threed==1) {
                 // Display from bottom-right to top left
@@ -315,7 +318,7 @@ class Pallet
                             $result->compositeImage($reel, \imagick::COMPOSITE_OVER,
                                 //($i)*$diam-$radius -($rows-$row-2)*$rowoffset, $j*$diam-$diam +$row*$rowoffset);
                                 ($i)*$diam-$radius +$row*$rowoffset -5, $j*$diam-$diam +$row*$rowoffset);
-                            // TODO
+                            // TODO: improve
                         }
                     }
                 }
@@ -347,8 +350,8 @@ class Pallet
             } else {
                 $nrollsperrow=$across * $up  - floor($up/2);
             }
-            $rollsperpallet=0;
-            $palletheight=$rollwidth_mm*$rows;
+            $this->rollsperpallet=0;
+            $this->palletheight=$rollwidth_mm*$rows;
             // TODO: draw from bottom right
             for ($row = 0; $row < $rows; $row++) {
                 for ($j = 0; $j < $up; $j++) {
@@ -372,23 +375,23 @@ class Pallet
                             && ( ($p1-$diam_mm*$across)< $radius_mm) ) {
                             // do not create a roll on the right, not rnough space
                         } else {        // add reel image
-                            $rollsperpallet++;
+                            $this->rollsperpallet++;
                             $result->compositeImage($reel, \imagick::COMPOSITE_OVER,
                                 $x+ $row*$rowoffset +$left, $y +$row*$rowoffset +$top);
                         }
                     }
                 }
             }
-            $this->debug1("vertical interlinked: nrollsperrow=$nrollsperrow across=$across up=$up rollsperpallet=$rollsperpallet palletheight=$palletheight");
+            $this->debug1("vertical interlinked: nrollsperrow=$nrollsperrow across=$across up=$up rollsperpallet=$this->rollsperpallet palletheight=$this->palletheight");
 
         } else if ($layout == 'horsq') {     // -- horiz. square --
             $rowoffset=$radius*0.75;
             $across=1;
             $up=floor($p2/$diam_mm);
             $nrollsperrow=$across * $up;   // nr rolls per row
-            $rollsperpallet=$nrollsperrow*$rows;
-            $palletheight=$diam_mm*$rows;
-            $this->debug1("horizontal square: nrollsperrow=$nrollsperrow across=$across up=$up rollsperpallet=$rollsperpallet palletheight=$palletheight");
+            $this->rollsperpallet=$nrollsperrow*$rows;
+            $this->palletheight=$diam_mm*$rows;
+            $this->debug1("horizontal square: nrollsperrow=$nrollsperrow across=$across up=$up rollsperpallet=$this->rollsperpallet palletheight=$this->alletheight");
             for ($row = 0; $row < $rows; $row++) {
                 for ($j = 0; $j < $up; $j++) {
                     $result->compositeImage($reel, \imagick::COMPOSITE_OVER,
@@ -400,8 +403,8 @@ class Pallet
             $rowoffset=$radius*0.65;
             $across=1;
             $up=floor($p2/$diam_mm);
-            $rollsperpallet=0;
-            $palletheight=$diam_mm+ $CompressedDiameter_mm*($rows-1);
+            $this->rollsperpallet=0;
+            $this->palletheight=$diam_mm+ $CompressedDiameter_mm*($rows-1);
             for ($row = 0; $row < $rows; $row++) {
                 for ($j = 0; $j < $up; $j++) {
 
@@ -417,20 +420,20 @@ class Pallet
                         && ( ($p2-$diam_mm*$up)< $radius_mm) ) {
                         // do not create a roll on the bottom, not enough space
                     } else {        // add reel image
-                        $rollsperpallet++;
+                        $this->rollsperpallet++;
                         $result->compositeImage($reel, \imagick::COMPOSITE_OVER,
                             $x+ $row*$rowoffset , $y +$top);
                     }
                 }
             }
-            $this->debug1("horizontal interlinked: across=$across up=$up rollsperpallet=$rollsperpallet palletheight=$palletheight");
+            $this->debug1("horizontal interlinked: across=$across up=$up rollsperpallet=$this->rollsperpallet palletheight=$this->palletheight");
 
         } else if ($layout == 'horpyr') {     // -- horiz. pyramid --
             $rowoffset=$radius*0.65;
             $across=1;
             $up=floor($p2/$diam_mm);
-            $rollsperpallet=0;
-            $palletheight=$diam_mm+ $CompressedDiameter_mm*($rows-1);
+            $this->rollsperpallet=0;
+            $this->palletheight=$diam_mm+ $CompressedDiameter_mm*($rows-1);
             for ($row = 0; $row < $rows; $row++) {
                 for ($j = 0; $j < $up; $j++) {
 
@@ -442,7 +445,7 @@ class Pallet
                             // hide reel on pyramid edge
                         } else {
                             //echo "even row=$row j=$j top=$top <br>";
-                            $rollsperpallet++;
+                            $this->rollsperpallet++;
                             $result->compositeImage($reel, \imagick::COMPOSITE_OVER,
                                 $x+ $row*$rowoffset , $y +$top);
                         }
@@ -452,7 +455,7 @@ class Pallet
                             // hide reel on pyramid edge
                         } else {
                             //echo "odd row=$row j=$j top=$top <br>";
-                            $rollsperpallet++;
+                            $this->rollsperpallet++;
                             $result->compositeImage($reel, \imagick::COMPOSITE_OVER,
                                 $x+ $row*$rowoffset , $y +$top);
                         }
@@ -460,7 +463,7 @@ class Pallet
                     }
                 }
             }
-            $this->debug1("horizontal pyramid: across=$across up=$up rollsperpallet=$rollsperpallet palletheight=$palletheight");
+            $this->debug1("horizontal pyramid: across=$across up=$up rollsperpallet=$this->rollsperpallet palletheight=$this->palletheight");
 
         } else {  // testing, draw one reel
             //$reel->rotateImage('none', 90);
@@ -468,10 +471,15 @@ class Pallet
             //$result->rotateImage('none', 33);
         }
 
-        if ($palletheight > $maxLoadingHeight) {
-            $this->debug1("MaxLoadingHeight $maxLoadingHeight exceeded.");
+        if ($this->palletheight > $this->maxLoadingHeight) {
+            $this->heightexceeded="Max loading height $this->maxLoadingHeight mm exceeded";
+            $this->debug1($this->heightexceeded);
         }
-
+        $this->kgsperpallet = $this->rollsperpallet * $this->rollkgs;  // total weight
+        if ($this->kgsperpallet > $this->maxLoadingWeight) {
+            $this->weightexceeded="Max weight $this->maxLoadingWeight kgs exceeded";
+            $this->debug1($this->weightexceeded);
+        }
 
         // ------------ prepare display ----------------------
         //
@@ -486,7 +494,7 @@ class Pallet
             Header("Content-Type: application/force-download");
             header('Content-Type: image/jpeg'); // Send JPEG header
             Header("Content-Disposition: attachment; filename=" . "pallet.jpg");
-            $result->writeImage($dir . '/out/' . $f);  // Write to disk anyway?
+            $result->writeImage($this->outdir . '/' . $f);  // Write to disk anyway?
             //header('Content-Length: ' . $dir . '/out/' . $f);  // TODO: Calculate image size?
             echo $result;                          // todo: Output to browser
 
