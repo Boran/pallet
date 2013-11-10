@@ -2,7 +2,7 @@
 Server preparation:
 - setup a Linux box to deploy to (Ubuntu 12.04 VM on 192.168.10.128 in the example below).
 - Setup apache and check that php scripts run fine.
-- Install imagemagick, e.g. on ubuntu 12.04
+- Install imagemagick,  libs, php interfaces, e.g. on ubuntu 12.04
  apt-get install imagemagick php5-dev
  apt-get install libmagick-dev
  apt-get remove graphicsmagick-libmagick-dev-compat imagemagick imagemagick-common

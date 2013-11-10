@@ -155,7 +155,7 @@ class Pallet
         try
         {
             // create new canvas for pallet + stacked rolls
-            // note how '/' is prefixed for thsi global library
+            // note how '\' is prefixed for a global (non symfony) library
             $result = new \Imagick();
 
             $result->newImage($plength+3*$radius, $pwidth+3*$radius, 'white');
