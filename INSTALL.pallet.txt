@@ -2,7 +2,7 @@
 Server preparation:
 - setup a Linux box to deploy to (Ubuntu 12.04 VM on 192.168.10.128 in the example below).
 - Setup apache and check that php scripts run fine.
-- Install imagemagick,  libs, php interfaces, e.g. on ubuntu 12.04
+- Install imagemagick, libs, php interfaces, e.g. on ubuntu 12.04
  apt-get install imagemagick php5-dev
  apt-get install libmagick-dev
  apt-get remove graphicsmagick-libmagick-dev-compat imagemagick imagemagick-common
@@ -30,13 +30,15 @@ As root:
   su www-data -c 'php app/console cache:clear --env=dev --no-debug'
   su www-data -c 'php app/console cache:clear --env=prod --no-debug'
   chown -R www-data app/cache app/logs
-- Pallet tool output directory
+# Ensure output directory is writeable
   mkdir web/out
   chown -R www-data web/out
 
 Start the tool:
   http://192.168.10.128/pallet/web             (prod version)
   http://192.168.10.128/pallet/web/app_dev.php (dev/debugging)
+
+
 
 Notes:
 - on shared hosting, the "www-data" lines wont be needed, as you'll probably install and run it as the same user
@@ -46,8 +48,32 @@ Notes:
   visit http://192.168.10.128/pallet/web/config.php and confirm that there are no errors.
   vi web/app_dev.php (add IP of my workstation)
   visit http://192.168.10.128/pallet/web/app_dev.php/ and confirm that the default Welcome page (docs, configure, demo) comes up.
+- The symfony deployment ref doc:
+  http://symfony.com/fr/doc/current/book/installation.html
+  http://symfony.com/doc/current/cookbook/deployment-tools.html
 
-The symfony deployment ref doc:
-http://symfony.com/fr/doc/current/book/installation.html
-http://symfony.com/doc/current/cookbook/deployment-tools.html
-
+- One could prepare the server with ANSIBLE (see http://www.ansibleworks.com/), e.g.
+  tasks:
+  - name: PHP tools
+    apt: update_cache=yes pkg=$item state=installed
+    with_items: [php5-cli, php5-sqlite, php-xml-parser, php-http, php-mail, php-pear]
+  - name: Apache
+    apt: update_cache=yes pkg=$item state=installed
+    with_items: [apache2, libapache2-mod-php5, php5-mysql, php5, ssl-cert]
+  - name: imagemagick, php5-gd, php5-dev
+    apt: update_cache=yes pkg=$item state=installed
+    with_items: [imagemagick, php5-gd, php5-dev,libmagic-dev,libmagickwand-dev]v
+  - command: pecl -v install imagick-beta
+    #todo: keeps reinstalling and may hang, enable manually when needed
+    ignore_errors: True
+  - name: imagick.ini
+    template: src=/etc/php5/conf.d/imagick.ini  dest=/etc/php5/conf.d/imagick.ini
+    notify:
+    - restart apache
+  - name: Source for Pallet tool
+    # todo: would be nice to provision the app with composer too?
+    git:
+      repo=git://github.com/Boran/pallet.git dest=/var/www/pallet
+  handlers:
+    - name: restart apache
+      service: name=apache2 state=restarted
