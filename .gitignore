@@ -6,6 +6,7 @@
 /build/
 /vendor/
 /web/bundles/
+/web/out/*
 # actually lets version this:
 #/composer.phar
 /.idea/*
