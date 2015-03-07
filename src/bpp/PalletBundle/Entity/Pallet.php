@@ -396,7 +396,7 @@ class Pallet
             $nrollsperrow=$across * $up;   // nr rolls per row
             $this->rollsperpallet=$nrollsperrow*$rows;
             $this->palletheight=$diam_mm*$rows;
-            $this->debug1("horizontal square: nrollsperrow=$nrollsperrow across=$across up=$up rollsperpallet=$this->rollsperpallet palletheight=$this->alletheight");
+            $this->debug1("horizontal square: nrollsperrow=$nrollsperrow across=$across up=$up rollsperpallet=$this->rollsperpallet palletheight=$this->palletheight");
             for ($row = 0; $row < $rows; $row++) {
                 for ($j = 0; $j < $up; $j++) {
                     $result->compositeImage($reel, \imagick::COMPOSITE_OVER,
