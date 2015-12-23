@@ -1,17 +1,25 @@
 
 Server preparation:
-- setup a Linux box to deploy to (Ubuntu 12.04 VM on 192.168.10.128 in the example below).
+- setup a Linux box to deploy to (Ubuntu VM on 192.168.10.128 in the example below).
 - Setup apache and check that php scripts run fine.
-- Install imagemagick, libs, php interfaces, e.g. on ubuntu 12.04
+
+- 14.04
+  apt-get install imagemagick php5-imagick libmagickwand-dev 
+
+- 12.04: was tricky, not sure why
+ Install imagemagick, libs, php interfaces, e.g. on ubuntu 12.04
  apt-get install imagemagick php5-dev
  apt-get install libmagick-dev
  apt-get remove graphicsmagick-libmagick-dev-compat imagemagick imagemagick-common
  apt-get autoremove
  apt-get install libmagickwand-dev
  pecl install imagick-beta
+
+- Apache:
  vi /etc/php5/conf.d/imagick.ini
      extension=imagick.so
 - Apache:  add "AllowOverride All" to "<Directory /var/www/>" in /etc/apache2/sites-enabled/000-default and restart apache.
+  service apache2 reload
 
 Deployment of the pallet tool:
 As root:
@@ -25,8 +33,9 @@ As root:
   curl -s http://getcomposer.org/installer | php
 
 # Pull symfony components
+  php composer.phar install
+  # or: 
   composer install
-  # or: php composer.phar install
 
 # Clear caches and set rights
   rm -rf app/cache/dev/* app/cache/prod/*
